@@ -2,3 +2,4 @@
 *.lck
 *.bak_000f
 Documentation/Diagrams.vpp.bak_000f
+.vscode/launch.json
