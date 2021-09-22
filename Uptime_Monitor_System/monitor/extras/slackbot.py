@@ -7,12 +7,12 @@ from dotenv import load_dotenv
 
 class SlackBot():
     """Slack messagin bot - Every instance is tied to a channel. Create a slack_token and a channel then use it to create a SlackBot"""
-    def __init__(self, channel: str) -> None:
+    def __init__(self, channel="#uptime-monitor-system") -> None:
         dotenv_path = join(dirname(__file__), '.env')
         load_dotenv(dotenv_path)
         token = os.environ.get('SLACK_TOKEN')
         self._client = WebClient(token)
-        self.channel = channel
+        self.channel = "#uptime-monitor-system"
         self.last_error = None
 
     def post_message(self, message: str) -> bool:
@@ -30,7 +30,7 @@ class SlackBot():
 
 
 if __name__ == "__main__":
-    bot = SlackBot(channel="#uptime-monitor-system")
+    bot = SlackBot()
     if bot.post_message(message='OOP class message again!'):
         print("Message sent!")
     else:
