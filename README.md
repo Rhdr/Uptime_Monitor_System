@@ -3,3 +3,4 @@
 Dependencies:
 - Django
 - slackclient
+- python-dotenv
