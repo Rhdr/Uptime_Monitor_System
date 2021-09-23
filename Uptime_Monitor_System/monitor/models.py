@@ -11,4 +11,4 @@ class Website(models.Model):
     slack_account_url = models.URLField()
 
     def __str__(self):
-        return f'{self.name}'
+        return f'{self.site_name}'
