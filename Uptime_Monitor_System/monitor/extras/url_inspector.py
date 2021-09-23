@@ -1,7 +1,7 @@
 import urllib.request
 
 
-class URLStatus():
+class URLInspector():
     """Check a url's status with the is_alive static command"""
     def __init__(self) -> None:
         self.last_http_response = None
@@ -21,7 +21,7 @@ class URLStatus():
 
 
 if __name__ == "__main__":
-    url_status = URLStatus()
+    url_status = URLInspector()
     status = url_status.is_alive("https://www.stackoverflow.com")
     print(f'https://www.stackoverflow.com: {status}')
     status = url_status.is_alive("http://foo.example.org/")
