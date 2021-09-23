@@ -7,6 +7,7 @@ class JobScheduler:
     def __init__(self) -> None:
         self._lock = threading.Lock()
         self._started = False
+        self._stop = False
 
     def start(self, seconds: int, job, **job_kwargs) -> None:
         '''run the fucntion/job every x seconds'''
@@ -19,12 +20,16 @@ class JobScheduler:
         else:
             raise InterruptedError('You can only start the JobScheduler once')
 
+    def stop(self):
+        self._stop = True
+
     def _scheduled_worker(self) -> None:
         '''define a recursive job'''
         with self._lock:
             # print(f"{datetime.datetime.now()}: Worker: I'm working...")
-            self.job(**self.job_kwargs)
-            threading.Timer(self.seconds, self._scheduled_worker).start()
+            if not self._stop:
+                self.job(**self.job_kwargs)
+                threading.Timer(self.seconds, self._scheduled_worker).start()
 
 
 if __name__ == '__main__':
@@ -41,5 +46,6 @@ if __name__ == '__main__':
     print("__main__: After the worker started: I can still run!")
     time.sleep(7)
     print("__main__: After the worker started: and run some more!")
-    print("__main__: After the worker started: Lets run the worker again!")
-    scheduler.start(10, job_that_needs_doing)
+    #print("__main__: After the worker started: Lets run the worker again!")
+    #scheduler.start(10, job_that_needs_doing)
+    scheduler.stop()
