@@ -4,10 +4,10 @@ from slackbot import SlackBot
 
 
 class URLInspectTool():
-    """Check a url's status with the is_alive static command"""
+    """Get a httpresponse form a url list"""
     @staticmethod
     def urlopen_http_response(url_list: list) -> dict:
-        '''Return true if a website is up and running'''
+        '''Return a dict containing the url:http_response_codes'''
 
         retdict = {}
         for url in url_list:
