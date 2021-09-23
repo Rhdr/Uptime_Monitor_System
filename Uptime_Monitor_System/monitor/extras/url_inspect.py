@@ -1,7 +1,7 @@
 import urllib.request
 from datetime import datetime
-from job_scheduler import JobScheduler
-from slackbot import SlackBot
+from .job_scheduler import JobScheduler
+from .slackbot import SlackBot
 
 
 class URLInspectTool():
@@ -38,21 +38,24 @@ class ScheduledURLInspector:
 
     def stop_scheduled_inspection(self):
         self.job_scheduler.stop()
-        self._slackbot_chat(f"{datetime.now()} - Scheduled inspections stopped, the websites are no longer being monitored")
+        self._slackbot_chat(
+            f"{datetime.now()} - Scheduled inspections stopped, the websites are no longer being monitored"
+        )
 
     def _inspection_job(self, url_list) -> None:
         new_inspection_job_report = (
             URLInspectTool.urlopen_http_response(url_list))
         if self.prev_inspection_job_report != new_inspection_job_report:
             self._slackbot_chat(
-                f"{datetime.now()} - A status change have been detected! {new_inspection_job_report}")
+                f"{datetime.now()} - A status change have been detected! {new_inspection_job_report}"
+            )
         else:
-            self._slackbot_chat(f"{datetime.now()} - All is well, no change detected")
+            self._slackbot_chat(
+                f"{datetime.now()} - All is well, no change detected")
         self.prev_inspection_job_report = new_inspection_job_report
 
-
     def _slackbot_chat(self, message) -> None:
-        if slackbot:
+        if self.slackbot:
             self.slackbot.post_message(message)
         else:
             print(message)
