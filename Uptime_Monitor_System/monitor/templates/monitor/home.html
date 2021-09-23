@@ -21,52 +21,37 @@
             <h3>Monitored Sites:</h3>
             <button class="btn btn-primary">Add Site</button>
         </div>
-        <table class="table table-striped">
-            <thead>
-                <tr>
-                    <th scope="col">#</th>
-                    <th scope="col">Site Name</th>
-                    <th scope="col">Site URL</th>
-                    <th scope="col">Status</th>
-                    <th scope="col">Edit</th>
-                    <th scope="col">Delete</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <th scope="row">1</th>
-                    <td>My Site 1</td>
-                    <td><a href="https://mysite1.com">https://mysite1.com</a></td>
-                    <td><span class="px-3 py-2 m-3 bg-success text-light">UP</span></td>
-                    <td><a href="#Edit" class="btn btn-primary">Edit</a></td>
-                    <td><a href="#Delete" class="btn btn-danger">Delete</a></td>
-                </tr>
-                <tr>
-                    <th scope="row">2</th>
-                    <td>My Site 2</td>
-                    <td><a href="https://mysite1.com">https://mysite2.com</a></td>
-                    <td><span class="px-3 py-2 m-3 bg-success text-light">UP</span></td>
-                    <td><a href="#Edit" class="btn btn-primary">Edit</a></td>
-                    <td><a href="#Delete" class="btn btn-danger">Delete</a></td>
-                </tr>
-                <tr>
-                    <th scope="row">3</th>
-                    <td>My Site 3</td>
-                    <td><a href="https://mysite1.com">https://mysite3.com</a></td>
-                    <td><span class="px-3 py-2 m-3 bg-danger text-light">Down</span></td>
-                    <td><a href="#Edit" class="btn btn-primary">Edit</a></td>
-                    <td><a href="#Delete" class="btn btn-danger">Delete</a></td>
-                </tr>
-                <tr>
-                    <th scope="row">4</th>
-                    <td>My Site 4</td>
-                    <td><a href="https://mysite1.com">https://mysite4.com</a></td>
-                    <td><span class="px-3 py-2 m-3 bg-success text-light">UP</span></td>
-                    <td><a href="#Edit" class="btn btn-primary">Edit</a></td>
-                    <td><a href="#Delete" class="btn btn-danger">Delete</a></td>
-                </tr>
-            </tbody>
-        </table>
+
+        <div>
+            {% if websites %}
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">Site Name</th>
+                        <th scope="col">Site URL</th>
+                        <th scope="col">Status</th>
+                        <th scope="col"></th>
+                        <th scope="col"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for website in websites %}
+                    <tr>
+                        <th scope="row">{{ website.row_number }}</th>
+                        <td>{{ website.site_name }}</td>
+                        <td><a href={{ website.site_url }}>{{ website.site_url }}</a></td>
+                        <td><span class="px-3 bg-success text-light">{{ website.site_status }}</span></td>
+                        <td><a href="#Edit" class="btn btn-primary">Edit</a></td>
+                        <td><a href="#Delete" class="btn btn-danger">Delete</a></td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% else %}
+            <p>No records found</p>
+            {% endif %}
+        </div>
     </main>
 
     <footer class="container-lg">
