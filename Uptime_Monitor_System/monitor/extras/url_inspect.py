@@ -38,7 +38,7 @@ class inspectionURLTool():
                 new_http_response_code = 404
             if website.site_last_http_response != new_http_response_code:
                 website.site_last_http_response = new_http_response_code
-                website.site_status = True if new_http_response_code == 200 else False
+                website.site_up_status = True if new_http_response_code == 200 else False
                 changed_websites.append(website)
         return changed_websites
 
