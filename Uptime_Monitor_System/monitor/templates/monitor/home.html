@@ -50,7 +50,7 @@
                         <td><a href={{ website.site_url }} target="_blank" class="btn btn-outline-primary">
                                 {{ website.site_url }}</a>
                         </td>
-                        {% if website.site_status == True %}
+                        {% if website.site_up_status == True %}
                         <td class="text-center border rounded bg-success text-light">UP</td>
                         {% else %}
                         <td class="text-center border rounded bg-danger text-light">DOWN</td>
@@ -81,29 +81,16 @@
                     <h5 class="modal-title" id="staticBackdropLabel">Add/Edit Site</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
-                <form>
+                <form method="POST">
                     {% csrf_token %}
                     <div class="modal-body">
-                        <div class="mb-3">
-                            <label for="site_name" class="form-label">Site Name</label>
-                            <input type="text" class="form-control" id="site_name">
-                        </div>
-                        <div class="mb-3">
-                            <label for="site_url" class="form-label">Site URL</label>
-                            <input type="url" class="form-control" id="site_url">
-                        </div>
-                        <div class="mb-3">
-                            <label for="site_webhook" class="form-label">Site URL</label>
-                            <input type="url" class="form-control" id="site_webhook">
-                        </div>
-                        <div class="mb-3">
-                            <label for="slack_account_url" class="form-label">Slack Account URL</label>
-                            <input type="url" class="form-control" id="slack_account_url">
-                        </div>
+                        <fieldset class="form-group">
+                            {{ form.as_p }}
+                        </fieldset>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                        <button type="submit" class="btn btn-primary" data-bs-dismiss="modal">Create/Save</button>
+                        <!-- <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button> -->
+                        <button type="submit" class="btn btn-primary">Create/Save</button>
                     </div>
                 </form>
             </div>
