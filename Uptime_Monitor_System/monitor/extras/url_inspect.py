@@ -1,58 +1,95 @@
 import urllib.request
 from datetime import datetime
-from .job_scheduler import JobScheduler
-from .slackbot import SlackBot
+
+from django.db.models.query import QuerySet
+
+if __name__ == '__main__':
+    import sys
+    sys.path.insert(
+        1, 'c:\\Projects\\Uptime_Monitor_System\\Uptime_Monitor_System')
+    import os
+    os.environ.setdefault("DJANGO_SETTINGS_MODULE",
+                          "Uptime_Monitor_System.settings")
+    import django
+    django.setup()
+    from django.core.management import call_command
+
+    from monitor.extras.job_scheduler import JobScheduler
+    from monitor.extras.slackbot import SlackBot
+    from monitor.models import Website
+else:
+    from .job_scheduler import JobScheduler
+    from .slackbot import SlackBot
+    from ..models import Website
 
 
-class URLInspectTool():
-    """Get a httpresponse form a url list"""
+class inspectionURLTool():
+    """Get a http response form websites"""
     @staticmethod
-    def urlopen_http_response(url_list: list) -> dict:
+    def get_changed_responses(websites: list) -> dict:
         '''Return a dict containing the url:http_response_codes'''
-
-        retdict = {}
-        for url in url_list:
+        changed_websites = []
+        for website in websites:
             try:
-                http_response_code = (urllib.request.urlopen(url).getcode())
+                new_http_response_code = urllib.request.urlopen(
+                    website.site_url).getcode()
             except urllib.request.URLError:
-                http_response_code = 404
-            retdict[url] = http_response_code
-        return retdict
+                new_http_response_code = 404
+            if website.site_last_http_response != new_http_response_code:
+                website.site_last_http_response = new_http_response_code
+                website.site_status = True if new_http_response_code == 200 else False
+                changed_websites.append(website)
+        return changed_websites
 
 
-class ScheduledURLInspector:
-    def __init__(self, url_list: list, job_scheduler: JobScheduler,
+class inspectionDBTool():
+    @staticmethod
+    def save_websites(websites: list) -> bool:
+        '''accepts a url: http_response_code'''
+        for website in websites:
+            website.save()
+
+    @staticmethod
+    def get_websites() -> dict:
+        '''return a url:Website dict'''
+        #websites = Website.objects.in_bulk(field_name='site_url')
+        websites = list(Website.objects.all())
+        return websites
+
+
+class Inspector:
+    """This class makes use of the JobScheduler to schedule 'website inspections'. 
+    Then using the URLInspectTool, it gets the status of the inspected websites.
+    Next Slackbot is used to post/chat website status changes to slack
+    Lastly InspectDBUpdater is used to update any status change to the db"""
+    def __init__(self, job_scheduler: JobScheduler,
                  slackbot: SlackBot) -> None:
-        self.url_list = url_list
         self.job_scheduler = job_scheduler
         self.slackbot = slackbot
-        self.prev_inspection_job_report = {}
+        self.websites = inspectionDBTool.get_websites()
 
     def start_scheduled_inspection(self) -> None:
-        self.job_scheduler.start(5,
-                                 self._inspection_job,
-                                 url_list=self.url_list)
+        self.job_scheduler.start(5, self._inspection)
         self._slackbot_chat(
-            f"{datetime.now()} - Scheduled inspection started, monitoring the following websites: {self.url_list}"
+            f"{datetime.now()} - Scheduled inspection started, monitoring the following websites: {self.websites}"
         )
 
-    def stop_scheduled_inspection(self):
+    def stop_scheduled_inspection(self) -> None:
         self.job_scheduler.stop()
         self._slackbot_chat(
             f"{datetime.now()} - Scheduled inspections stopped, the websites are no longer being monitored"
         )
 
-    def _inspection_job(self, url_list) -> None:
-        new_inspection_job_report = (
-            URLInspectTool.urlopen_http_response(url_list))
-        if self.prev_inspection_job_report != new_inspection_job_report:
+    def _inspection(self) -> None:
+        changed_websites = inspectionURLTool.get_changed_responses(self.websites)
+        if len(changed_websites) > 0:
             self._slackbot_chat(
-                f"{datetime.now()} - A status change have been detected! {new_inspection_job_report}"
+                f"{datetime.now()} - A status change have been detected! {changed_websites}"
             )
+            inspectionDBTool.save_websites(changed_websites)
         else:
             self._slackbot_chat(
                 f"{datetime.now()} - All is well, no change detected")
-        self.prev_inspection_job_report = new_inspection_job_report
 
     def _slackbot_chat(self, message) -> None:
         if self.slackbot:
@@ -60,29 +97,25 @@ class ScheduledURLInspector:
         else:
             print(message)
 
-    def _db_update(self) -> None:
-        pass
-
 
 if __name__ == "__main__":
     import time
+    def print_websites():
+        websites = Website.objects.all()
+        for website in websites:
+            print(website.site_name, website.site_url,
+                    website.site_last_http_response)
 
-    #url_inspect_tool = URLInspectTool()
-    urls = [
-        "https://www.google.com/",
-        "https://www.foo.bar.com/",
-        "https://www.stackoverflow.com",
-    ]
-    print(URLInspectTool.urlopen_http_response(urls))
-
+    print('Start')
+    print_websites()
     print('')
-    print('ScheduledURLInspector')
 
     job_scheduler = JobScheduler()
-    slackbot = SlackBot()
-    #slackbot = None
+    # slack_bot = SlackBot
+    slack_bot = None
+    inspector = Inspector(job_scheduler, slack_bot)
+    inspector.start_scheduled_inspection()
+    time.sleep(60)
+    inspector.stop_scheduled_inspection()
 
-    sinspector = ScheduledURLInspector(urls, job_scheduler, slackbot)
-    sinspector.start_scheduled_inspection()
-    time.sleep(20)
-    sinspector.stop_scheduled_inspection()
+    print_websites()
