@@ -24,7 +24,8 @@ else:
 
 
 class inspectionURLTool():
-    """Get a http response form websites"""
+    """Get a http response form websites & temp store result back into the website obj
+    The website obj needs to be saved to persist the data"""
     @staticmethod
     def get_changed_responses(websites: list) -> dict:
         '''Return a dict containing the url:http_response_codes'''
@@ -43,15 +44,14 @@ class inspectionURLTool():
 
 
 class inspectionDBTool():
+    """Get & Save websites"""
     @staticmethod
     def save_websites(websites: list) -> bool:
-        '''accepts a url: http_response_code'''
         for website in websites:
             website.save()
 
     @staticmethod
     def get_websites() -> dict:
-        '''return a url:Website dict'''
         #websites = Website.objects.in_bulk(field_name='site_url')
         websites = list(Website.objects.all())
         return websites
@@ -81,7 +81,9 @@ class Inspector:
         )
 
     def _inspection(self) -> None:
-        changed_websites = inspectionURLTool.get_changed_responses(self.websites)
+        '''schedueld job that runs until stop_scheduled_inspection is called'''
+        changed_websites = inspectionURLTool.get_changed_responses(
+            self.websites)
         if len(changed_websites) > 0:
             self._slackbot_chat(
                 f"{datetime.now()} - A status change have been detected! {changed_websites}"
@@ -100,11 +102,12 @@ class Inspector:
 
 if __name__ == "__main__":
     import time
+
     def print_websites():
         websites = Website.objects.all()
         for website in websites:
             print(website.site_name, website.site_url,
-                    website.site_last_http_response)
+                  website.site_last_http_response)
 
     print('Start')
     print_websites()
