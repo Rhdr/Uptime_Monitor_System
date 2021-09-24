@@ -12,66 +12,66 @@
 </head>
 
 <body>
-    <div class="container-lg shadow p-3 bg-white rounded min-vh-100">
-        <header class="container">
-            <h1 class="my-3">Uptime Monitor System</h1>
-        </header>
+    <!-- <div class="container-lg shadow p-3 bg-white rounded min-vh-100"> -->
+    <header class="container">
+        <h1 class="my-3">Uptime Monitor System</h1>
+    </header>
 
-        <main class="container">
-            <div class="container">
-                <div class="row">
-                    <div class="col-6">
-                        <h4>Monitored Sites:</h4>
-                    </div>
-                    <div class="col-6 text-end">
-                        <button type="button" class="btn btn-outline-primary w-50" data-bs-toggle="modal"
-                            data-bs-target="#btn_add_site">Add Site</button>
-                    </div>
+    <main class="container">
+        <div class="container">
+            <div class="row">
+                <div class="col-6">
+                    <h4>Monitored Sites:</h4>
+                </div>
+                <div class="col-6 text-end">
+                    <button type="button" class="btn btn-outline-primary w-50" data-bs-toggle="modal"
+                        data-bs-target="#btn_add_site">Add Site</button>
                 </div>
             </div>
-            <div>
-                {% if websites %}
-                <table class="table table-striped">
-                    <thead>
-                        <tr>
-                            <th scope="col">#</th>
-                            <th scope="col">Site Name</th>
-                            <th scope="col">Site URL</th>
-                            <th scope="col" class="text-center">Status</th>
-                            <th scope="col"></th>
-                            <th scope="col"></th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for website in websites %}
-                        <tr class="align-middle">
-                            <th scope="row">{{ website.row_number }}</th>
-                            <td><span class="fw-bold">{{ website.site_name }}</span></td>
-                            <td><a href={{ website.site_url }} target="_blank" class="btn btn-outline-primary">
-                                    {{ website.site_url }}</a>
-                            </td>
-                            {% if website.site_status == True %}
-                            <td class="text-center border rounded bg-success text-light">UP</td>
-                            {% else %}
-                            <td class="text-center border rounded bg-danger text-light">DOWN</td>
-                            {% endif %}
-                            </td>
-                            <td class="text-center">
-                                <a href="#Edit" type="button" class="btn btn-outline-primary">Edit</a>
-                            </td>
-                            <td class="text-center">
-                                <a href="#Delete" type="button" class="btn btn-outline-danger">Delete</a>
-                            </td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-                {% else %}
-                <p>No records found</p>
-                {% endif %}
-            </div>
-        </main>
-    </div>
+        </div>
+        <div>
+            {% if websites %}
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">Site Name</th>
+                        <th scope="col">Site URL</th>
+                        <th scope="col" class="text-center">Status</th>
+                        <th scope="col"></th>
+                        <th scope="col"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for website in websites %}
+                    <tr class="align-middle">
+                        <th scope="row">{{ website.row_number }}</th>
+                        <td><span class="fw-bold">{{ website.site_name }}</span></td>
+                        <td><a href={{ website.site_url }} target="_blank" class="btn btn-outline-primary">
+                                {{ website.site_url }}</a>
+                        </td>
+                        {% if website.site_status == True %}
+                        <td class="text-center border rounded bg-success text-light">UP</td>
+                        {% else %}
+                        <td class="text-center border rounded bg-danger text-light">DOWN</td>
+                        {% endif %}
+                        </td>
+                        <td class="text-center">
+                            <a href="#Edit" type="button" class="btn btn-outline-primary">Edit</a>
+                        </td>
+                        <td class="text-center">
+                            <a href="#Delete" type="button" class="btn btn-outline-danger">Delete</a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% else %}
+            <p>No records found</p>
+            {% endif %}
+        </div>
+    </main>
+    <!-- </div> -->
 
     <!-- add/edit site model -->
     <div class="modal fade" id="btn_add_site" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1">
