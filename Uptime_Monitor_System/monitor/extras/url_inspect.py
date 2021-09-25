@@ -67,12 +67,15 @@ class Inspector:
         self.job_scheduler = job_scheduler
         self.slackbot = slackbot
         self.websites = inspectionDBTool.get_websites()
+        self._started = False
 
     def start_scheduled_inspection(self) -> None:
-        self.job_scheduler.start(5, self._inspection)
-        self._slackbot_chat(
-            f"{datetime.now()} - Scheduled inspection started, monitoring the following websites: {self.websites}"
-        )
+        if not self._started:
+            self.job_scheduler.start(5, self._inspection)
+            self._slackbot_chat(
+                f"{datetime.now()} - Scheduled inspection started, monitoring the following websites: {self.websites}"
+            )
+            self._started = True
 
     def stop_scheduled_inspection(self) -> None:
         self.job_scheduler.stop()
@@ -117,6 +120,9 @@ if __name__ == "__main__":
     # slack_bot = SlackBot
     slack_bot = None
     inspector = Inspector(job_scheduler, slack_bot)
+    inspector.start_scheduled_inspection()
+    #test multiple starts
+    inspector.start_scheduled_inspection()
     inspector.start_scheduled_inspection()
     time.sleep(60)
     inspector.stop_scheduled_inspection()
