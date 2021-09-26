@@ -141,13 +141,22 @@
 
     </ul>
 
+    <h1>Submit Form</h1>
+    <form id="post-form" method="POST">
+        {% csrf_token %}
+        <p>site_name</p><input type="text" name="site_name" id="site_name" /><br>
+        <p>site_url</p><input type="url" name="site_url" id="site_url" /><br>
+        <p>slack_token</p><input type="text" name="slack_token" id="slack_token" /><br>
+        <p>slack_channel</p><input type="text" name="slack_channel" id="slack_channel" /><br>
+        <input type="submit" />
+    </form>
 
     <script>
         $(document).ready(function () {
             setInterval(function () {
                 $.ajax({
                     type: 'GET',
-                    url: "{% url 'monitor-ajax_get' %}",
+                    url: "{% url 'monitor-ajax_json' %}",
                     success: function (response) {
                         //console.log(response);
                         $("#display_data").empty();
@@ -161,6 +170,29 @@
                     }
                 });
             }, 1000);
+        });
+    </script>
+    <script>
+        $(document).on('submit', '#post-form', function (e) {
+            e.preventDefault();
+
+            $.ajax({
+                type: 'POST',
+                url: "ajax_create/",
+                data: {
+                    site_name: $('#site_name').val(),
+                    site_url: $('#site_url').val(),
+                    slack_token: $('#slack_token').val(),
+                    slack_channel: $('#slack_channel').val(),
+                    csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val()
+                },
+                success: function (data) {
+                    console.log(data);
+                },
+                error: function (data) {
+                    console.log("An error occured");
+                }
+            });
         });
     </script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
