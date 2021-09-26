@@ -16,6 +16,46 @@
     <ul id="display_data">
     </ul>
 
+    <main class="container">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Site Name</th>
+                    <th scope="col">Site URL</th>
+                    <th scope="col" class="text-center">Status</th>
+                    <th scope="col"></th>
+                    <th scope="col"></th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr class="align-middle">
+                    <td scope="row"> website.row_number</td>
+                    <td><span class="fw-bold">{{ website.site_name }}</span></td>
+                    <td><a href={{ website.site_url }} target="_blank" class="btn btn-outline-primary">
+                            {{ website.site_url }}</a>
+                    </td>
+                    {% if website.site_up_status == True %}
+                    <td class="text-center border rounded bg-success text-light">UP</td>
+                    {% else %}
+                    <td class="text-center border rounded bg-danger text-light">DOWN</td>
+                    {% endif %}
+                    </td>
+                    <td class="text-center">
+                        <a id="a_edit_tbl" href="{% url 'monitor-home-edit' pk=website.pk %}" type="button"
+                            class="btn btn-outline-primary">Edit</a>
+                    </td>
+                    <td class="text-center">
+                        <a id="a_delete_tbl" href="{% url 'monitor-home-delete' pk=website.pk %}" type="button"
+                            class="btn btn-outline-danger">Delete</a>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </main>
+
+
+
     <h1>Submit Form</h1>
     <form id="post-form" method="POST">
         {% csrf_token %}

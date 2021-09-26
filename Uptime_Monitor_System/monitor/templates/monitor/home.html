@@ -1,18 +1,19 @@
 <!doctype html>
 {% load static %}
-
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!-- bootstrap css -->
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
-        integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+        integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
     <title>Uptime Monitor</title>
 </head>
+
+
 
 <body>
     <!-- <div class="container-lg shadow p-3 bg-white rounded min-vh-100"> -->
@@ -37,14 +38,16 @@
                     <h4>Monitored Sites:</h4>
                 </div>
                 <div class="col-6 text-end">
-                    <a id="a_add" href="{% url 'monitor-home-add' %}" type="button"
-                        class="btn btn-outline-primary w-50">Add Site django</a>
+                    <button id='btn_add' type="button" class="btn btn-outline-primary w-100 my-2" data-toggle="modal"
+                        data-target="#modal_add_site">
+                        Add Site
+                    </button>
                 </div>
             </div>
         </div>
         <div>
             {% if websites %}
-            <table class="table table-striped">
+            <table id="table-main" class="table table-striped">
                 <thead>
                     <tr>
                         <th scope="col">#</th>
@@ -68,23 +71,32 @@
     </main>
     <!-- </div> -->
 
-    <!-- add/edit site model -->
-    <div class="modal fade" id="btn_add_site" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1">
-        <div class="modal-dialog">
+
+    <!-- Modal -->
+    <div class="modal fade" id="modal_add_site" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="staticBackdropLabel">Add/Edit Website</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
                 </div>
-                <form method="POST">
-                    {% csrf_token %}
+                <form id="post-form" method="POST">
                     <div class="modal-body">
-                        <fieldset class="form-group">
-                            {{ add_form.as_p }}
-                        </fieldset>
+                        {% csrf_token %}
+                        <p>site_name</p><input type="text" name="site_name" id="add_edit_modal_site_name" /><br>
+                        <p>site_url</p><input type="url" name="site_url" id="add_edit_modal_site_url" /><br>
+                        <p>slack_token</p><input type="text" name="slack_token" id="add_edit_modal_slack_token" /><br>
+                        <p>slack_channel</p><input type="text" name="slack_channel"
+                            id="add_edit_modal_slack_channel" /><br>
+                        <span></span><input type="hidden" name="pk_website" id="add_edit_modal_pk_website" /><br>
+                        <span></span><input type="hidden" name="add_edit_modal" id="add_edit_modal" /><br>
                     </div>
                     <div class="modal-footer">
-                        <button type="submit" class="btn btn-primary">Create/Save</button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <input type="submit" class="btn btn-primary" />
                     </div>
                 </form>
             </div>
@@ -92,7 +104,7 @@
     </div>
 
     <!-- delete confirmation -->
-    <div class="modal fade" id="btn_delete_site" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1">
+    <div class="modal fade" id="modal_delete_site" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
@@ -124,6 +136,7 @@
     </form> -->
 
     <script>
+        //GET
         $(document).ready(function () {
             setInterval(function () {
                 $.ajax({
@@ -134,17 +147,17 @@
                         for (var key in response.websites) {
                             var status;
                             if (response.websites[key].site_up_status == true) {
-                                status = "<td class='text-center border rounded bg-success text-light'>UP</td>"
+                                status = "<th class='text-center border rounded bg-success text-light'>UP</th>"
                             } else {
-                                status = "<td class='text-center border rounded bg-danger text-light'>DOWN</td>"
+                                status = "<th class='text-center border rounded bg-danger text-light'>DOWN</th>"
                             }
                             var tbl_html = "<tr id='tr-main' class='align-middle'>" +
                                 "<th scope='row'>" + response.websites[key].row_number + "</th>" +
                                 "<td><span class='fw-bold'>" + response.websites[key].site_name + "</span></td>" +
                                 "<td><a href='" + response.websites[key].site_url + "' target='_blank' class='btn btn-outline-primary'>" + response.websites[key].site_url + "</a ></td >" +
                                 status +
-                                "<td class='text-center'><a id='a_edit_tbl' href='#' type='button' class='btn btn-outline-primary'>Edit</a></td>" +
-                                "<td class='text-center'><a id='a_delete_tbl' href='#' type='button' class='btn btn-outline-danger'>Delete</a></td>" +
+                                "<td class='text-center'><button type='button' class='btn btn-outline-primary btn_edit' data-toggle='modal' data-target='#modal_add_site'>Edit</button></td>" +
+                                "<td class='text-center'><button type='button' class='btn btn-outline-danger btn_delete' data-toggle='modal' data-target='#modal_delete_site'>Delete</button></td>" +
                                 "</tr>"
 
                             $("#tbody-main").append(tbl_html)
@@ -157,31 +170,82 @@
             }, 1000);
         });
     </script>
-    <!-- <script>
-        $(document).on('submit', '#post-form', function (e) {
-            e.preventDefault();
+    <script>
+        //POST-ADD
+        var add_edit_modal = $('#add_edit_modal').val()
+        if (add_edit_modal == 'ADD') {
+            console.log("Adding")
+            $(document).on('submit', '#post-form', function (e) {
+                e.preventDefault();
 
-            $.ajax({
-                type: 'POST',
-                url: "ajax_create/",
-                data: {
-                    site_name: $('#site_name').val(),
-                    site_url: $('#site_url').val(),
-                    slack_token: $('#slack_token').val(),
-                    slack_channel: $('#slack_channel').val(),
-                    csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val()
-                },
-                success: function (data) {
-                    console.log(data);
-                },
-                error: function (data) {
-                    console.log("An error occured");
-                }
+                $.ajax({
+                    type: 'POST',
+                    url: "ajax_create/",
+                    data: {
+                        site_name: $('#site_name').val(),
+                        site_url: $('#site_url').val(),
+                        slack_token: $('#slack_token').val(),
+                        slack_channel: $('#slack_channel').val(),
+                        csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val()
+                    },
+                    success: function (data) {
+                        console.log(data);
+                    },
+                    error: function (data) {
+                        console.log("An error occured");
+                    }
+                });
+            });
+        }
+    </script>
+    <script>
+        //POST-EDIT
+        var add_edit_modal = $('#add_edit_modal').val()
+        if (add_edit_modal == 'EDIT') {
+            console.log("Editing")
+            $(document).on('submit', '#post-form', function (e) {
+                e.preventDefault();
+
+                $.ajax({
+                    type: 'POST',
+                    url: "ajax_edit/",
+                    data: {
+                        pk_website: $('#pk_website').val(),
+                        site_name: $('#site_name').val(),
+                        site_url: $('#site_url').val(),
+                        slack_token: $('#slack_token').val(),
+                        slack_channel: $('#slack_channel').val(),
+                        csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val()
+                    },
+                    success: function (data) {
+                        console.log(data);
+                    },
+                    error: function (data, error) {
+                        console.log("An error occured:" + error);
+                    }
+                });
+            });
+        }
+    </script>
+
+    <!-- <script>
+        $(document).ready(function () {
+            $(".btn_edit").on('click', function () {
+                var btn_id = this.id; // button ID 
+                var tr_id = $(this).closest('tr').attr('id'); // table row ID 
+                console.log("btn_id")
+                console.log("tr_id")
             });
         });
     </script> -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+
+
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+        integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+        crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+        integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
         crossorigin="anonymous"></script>
     <script src="{% static 'monitor/js/myscript.js' %}"></script>
 </body>
