@@ -8,6 +8,7 @@ urlpatterns = [
     path('delete/<int:pk>/', views.home_delete, name='monitor-home-delete'),
     path('ajax_json/', views.ajax_json, name='monitor-ajax_json'),
     path('ajax_create/', views.ajax_create, name='monitor-ajax_create'),
+    path('ajax_edit/', views.ajax_edit, name='monitor-ajax_edit'),
 
 
     # path('ajax_home/', views.ajax_home, name='monitor-ajax_home'),
