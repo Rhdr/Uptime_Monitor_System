@@ -7,17 +7,16 @@
 //     });
 // });
 
-$(document).on("click", '#btn_add', function (event) {
-    $('#add_edit_modal').val('ADD')
-    $('#add_edit_modal_pk_website').val(-1)
-    $('#add_edit_modal_site_name').val('')
-    $('#add_edit_modal_site_url').val('')
-    $('#add_edit_modal_slack_token').val('')
-    $('#add_edit_modal_slack_channel').val('')
-});
+// $(document).on("click", '#btn_add', function (event) {
+//     $('#add_edit_modal_pk_website').val(-1)
+//     $('#add_edit_modal_site_name').val('')
+//     $('#add_edit_modal_site_url').val('')
+//     $('#add_edit_modal_slack_token').val('')
+//     $('#add_edit_modal_slack_channel').val('')
+// });
 
 $(document).on("click", '.btn_edit', function (event) {
-    // console.log("edit btn clicked!")
+    console.log("edit btn clicked!")
     //get current row & then the unique url
     var current_row = $(this).closest("tr");
     var cell_site_url = current_row.find("td:eq(1)").text();
@@ -40,12 +39,11 @@ $(document).on("click", '.btn_edit', function (event) {
                     // console.log("obj_slack_token:" + slack_token)
                     // console.log("obj_slack_channel:" + slack_channel)
 
-                    $('#add_edit_modal').val('EDIT')
-                    $('#add_edit_modal_pk_website').val(pk_website)
-                    $('#add_edit_modal_site_name').val(site_name)
-                    $('#add_edit_modal_site_url').val(site_url)
-                    $('#add_edit_modal_slack_token').val(slack_token)
-                    $('#add_edit_modal_slack_channel').val(slack_channel)
+                    $('#edit_modal_pk_website').val(pk_website)
+                    $('#edit_modal_site_name').val(site_name)
+                    $('#edit_modal_site_url').val(site_url)
+                    $('#edit_modal_slack_token').val(slack_token)
+                    $('#edit_modal_slack_channel').val(slack_channel)
                     break;
                 }
             }

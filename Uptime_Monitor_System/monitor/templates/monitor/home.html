@@ -72,27 +72,55 @@
     <!-- </div> -->
 
 
-    <!-- Modal -->
-    <div class="modal fade" id="modal_add_site" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
-        aria-hidden="true">
+    <!-- Modal add -->
+    <div class="modal fade" id="modal_add_site" tabindex="-1" role="dialog" aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+                    <h5 class="modal-title">Add Website</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
-                <form id="post-form" method="POST">
+                <form id="add-form" method="POST">
                     <div class="modal-body">
                         {% csrf_token %}
-                        <p>site_name</p><input type="text" name="site_name" id="add_edit_modal_site_name" /><br>
-                        <p>site_url</p><input type="url" name="site_url" id="add_edit_modal_site_url" /><br>
-                        <p>slack_token</p><input type="text" name="slack_token" id="add_edit_modal_slack_token" /><br>
-                        <p>slack_channel</p><input type="text" name="slack_channel"
-                            id="add_edit_modal_slack_channel" /><br>
-                        <span></span><input type="hidden" name="pk_website" id="add_edit_modal_pk_website" /><br>
-                        <span></span><input type="hidden" name="add_edit_modal" id="add_edit_modal" /><br>
+                        <p>site_name</p><input type="text" name="add_modal_site_name" id="add_modal_site_name" /><br>
+                        <p>site_url</p><input type="url" name="add_modal_site_url" id="add_modal_site_url" /><br>
+                        <p>slack_token</p><input type="text" name="add_modal_slack_token"
+                            id="add_modal_slack_token" /><br>
+                        <p>slack_channel</p><input type="text" name="add_modal_slack_channel"
+                            id="add_modal_slack_channel" /><br>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <input type="submit" class="btn btn-primary" />
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal edit -->
+    <div class="modal fade" id="modal_edit_site" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Edit Website</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <form id="edit-form" method="POST">
+                    <div class="modal-body">
+                        {% csrf_token %}
+                        <p>site_name</p><input type="text" name="edit_modal_site_name" id="edit_modal_site_name" /><br>
+                        <p>site_url</p><input type="url" name="edit_modal_site_url" id="edit_modal_site_url" /><br>
+                        <p>slack_token</p><input type="text" name="edit_modal_slack_token"
+                            id="edit_modal_slack_token" /><br>
+                        <p>slack_channel</p><input type="text" name="edit_modal_slack_channel"
+                            id="edit_modal_slack_channel" /><br>
+                        <span></span><input type="hidden" name="edit_modal_pk_website" id="edit_modal_pk_website" /><br>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
@@ -126,7 +154,7 @@
     </div>
 
     <!-- <h1>Submit Form</h1>
-    <form id="post-form" method="POST">
+    <form id="add-form" method="POST">
         {% csrf_token %}
         <p>site_name</p><input type="text" name="site_name" id="site_name" /><br>
         <p>site_url</p><input type="url" name="site_url" id="site_url" /><br>
@@ -156,7 +184,7 @@
                                 "<td><span class='fw-bold'>" + response.websites[key].site_name + "</span></td>" +
                                 "<td><a href='" + response.websites[key].site_url + "' target='_blank' class='btn btn-outline-primary'>" + response.websites[key].site_url + "</a ></td >" +
                                 status +
-                                "<td class='text-center'><button type='button' class='btn btn-outline-primary btn_edit' data-toggle='modal' data-target='#modal_add_site'>Edit</button></td>" +
+                                "<td class='text-center'><button type='button' class='btn btn-outline-primary btn_edit' data-toggle='modal' data-target='#modal_edit_site'>Edit</button></td>" +
                                 "<td class='text-center'><button type='button' class='btn btn-outline-danger btn_delete' data-toggle='modal' data-target='#modal_delete_site'>Delete</button></td>" +
                                 "</tr>"
 
@@ -169,63 +197,55 @@
                 });
             }, 1000);
         });
-    </script>
-    <script>
+
         //POST-ADD
-        var add_edit_modal = $('#add_edit_modal').val()
-        if (add_edit_modal == 'ADD') {
-            console.log("Adding")
-            $(document).on('submit', '#post-form', function (e) {
-                e.preventDefault();
+        console.log("Adding")
+        $(document).on('submit', '#add-form', function (e) {
+            e.preventDefault();
 
-                $.ajax({
-                    type: 'POST',
-                    url: "ajax_create/",
-                    data: {
-                        site_name: $('#site_name').val(),
-                        site_url: $('#site_url').val(),
-                        slack_token: $('#slack_token').val(),
-                        slack_channel: $('#slack_channel').val(),
-                        csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val()
-                    },
-                    success: function (data) {
-                        console.log(data);
-                    },
-                    error: function (data) {
-                        console.log("An error occured");
-                    }
-                });
+            $.ajax({
+                type: 'POST',
+                url: "ajax_create/",
+                data: {
+                    site_name: $('#add_modal_site_name').val(),
+                    site_url: $('#add_modal_site_url').val(),
+                    slack_token: $('#add_modal_slack_token').val(),
+                    slack_channel: $('#add_modal_slack_channel').val(),
+                    csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val()
+                },
+                success: function (data) {
+                    console.log(data);
+                },
+                error: function (data) {
+                    console.log("An error occured");
+                }
             });
-        }
-    </script>
-    <script>
+        });
+
         //POST-EDIT
-        var add_edit_modal = $('#add_edit_modal').val()
-        if (add_edit_modal == 'EDIT') {
-            console.log("Editing")
-            $(document).on('submit', '#post-form', function (e) {
-                e.preventDefault();
+        console.log("Editing")
+        $(document).on('submit', '#edit-form', function (e) {
+            e.preventDefault();
 
-                $.ajax({
-                    type: 'POST',
-                    url: "ajax_edit/",
-                    data: {
-                        pk_website: $('#pk_website').val(),
-                        site_name: $('#site_name').val(),
-                        site_url: $('#site_url').val(),
-                        slack_token: $('#slack_token').val(),
-                        slack_channel: $('#slack_channel').val(),
-                        csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val()
-                    },
-                    success: function (data) {
-                        console.log(data);
-                    },
-                    error: function (data, error) {
-                        console.log("An error occured:" + error);
-                    }
-                });
+            $.ajax({
+                type: 'POST',
+                url: "ajax_edit/",
+                data: {
+                    pk_website: $('#edit_modal_pk_website').val(),
+                    site_name: $('#edit_modal_site_name').val(),
+                    site_url: $('#edit_modal_site_url').val(),
+                    slack_token: $('#edit_modal_slack_token').val(),
+                    slack_channel: $('#edit_modal_slack_channel').val(),
+                    csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val()
+                },
+                success: function (data) {
+                    console.log(data);
+                },
+                error: function (data, error) {
+                    console.log("An error occured:" + error);
+                }
             });
-        }
+        });
     </script>
 
     <!-- <script>
