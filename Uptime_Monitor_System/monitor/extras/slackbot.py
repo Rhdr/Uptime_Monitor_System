@@ -3,9 +3,10 @@ from slack.errors import SlackApiError
 import os
 from os.path import join, dirname
 from dotenv import load_dotenv
+import requests
 
 
-class SlackBot():
+class SlackBot_old():
     """Slack messagin bot - Every instance is tied to a channel. Create a slack_token and a channel then use it to create a SlackBot"""
     def __init__(self, channel="#uptime-monitor-system") -> None:
         dotenv_path = join(dirname(__file__), '.env')
@@ -19,7 +20,7 @@ class SlackBot():
         '''Post a message to slack to a hardcoded channel'''
         try:
             response = self._client.chat_postMessage(channel=self.channel,
-                                                    text=message)
+                                                     text=message)
             self.last_error = None
             return True
         except SlackApiError as e:
@@ -29,9 +30,35 @@ class SlackBot():
             return False
 
 
+class SlackBot():
+    @staticmethod
+    def post_message(slack_token: str, slack_channel: str,
+                     message: str) -> None:
+        if slack_token and slack_channel and message:
+            data = {
+                'token': slack_token,
+                'channel': slack_channel,  # User ID. 
+                'as_user': True,
+                'text': message
+            }
+            try:
+                requests.post(url='https://slack.com/api/chat.postMessage',
+                              data=data)
+            except Exception as e:
+                print("Could not send slack message:", str(e))
+        else:
+            print("Please provide a slack token, channel and message ")
+
+
 if __name__ == "__main__":
-    bot = SlackBot()
-    if bot.post_message(message='OOP class message again!'):
-        print("Message sent!")
-    else:
-        print("Message failed", bot.last_error)
+    slack_token = "xoxb-2503398942439-2525293310900-lHr4bEhHNbg0bgnafakqpSod"
+    #slack_token = ""
+    channel = '#monitor'
+    message = 'New slackbot saying hi yet again!'
+    SlackBot.post_message(slack_token, channel, message)
+
+    # bot = SlackBot()
+    # if bot.post_message(message='OOP class message again!'):
+    #     print("Message sent!")
+    # else:
+    #     print("Message failed", bot.last_error)
