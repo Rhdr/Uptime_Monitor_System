@@ -55,37 +55,16 @@
                         <th scope="col"></th>
                     </tr>
                 </thead>
-                <tbody>
-                    {% for website in websites %}
-                    <tr class="align-middle">
-                        <th scope="row">{{ website.row_number }}</th>
-                        <td><span class="fw-bold">{{ website.site_name }}</span></td>
-                        <td><a href={{ website.site_url }} target="_blank" class="btn btn-outline-primary">
-                                {{ website.site_url }}</a>
-                        </td>
-                        {% if website.site_up_status == True %}
-                        <td class="text-center border rounded bg-success text-light">UP</td>
-                        {% else %}
-                        <td class="text-center border rounded bg-danger text-light">DOWN</td>
-                        {% endif %}
-                        </td>
-                        <td class="text-center">
-                            <a id="a_edit_tbl" href="{% url 'monitor-home-edit' pk=website.pk %}" type="button"
-                                class="btn btn-outline-primary">Edit</a>
-                        </td>
-                        <td class="text-center">
-                            <a id="a_delete_tbl" href="{% url 'monitor-home-delete' pk=website.pk %}" type="button"
-                                class="btn btn-outline-danger">Delete</a>
-                        </td>
+                <tbody id="tbody-main">
+                    <tr id="tr-main" class="align-middle">
+
                     </tr>
-                    {% endfor %}
                 </tbody>
             </table>
             {% else %}
             <p>No records found</p>
             {% endif %}
         </div>
-        <a class="btn btn-outline-primary w-100" href="{% url 'monitor-home' %}">Refresh</a>
     </main>
     <!-- </div> -->
 
@@ -105,7 +84,6 @@
                         </fieldset>
                     </div>
                     <div class="modal-footer">
-                        <!-- <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button> -->
                         <button type="submit" class="btn btn-primary">Create/Save</button>
                     </div>
                 </form>
@@ -135,13 +113,7 @@
         </div>
     </div>
 
-
-    <h1>List of live data:</h1>
-    <ul id="display_data">
-
-    </ul>
-
-    <h1>Submit Form</h1>
+    <!-- <h1>Submit Form</h1>
     <form id="post-form" method="POST">
         {% csrf_token %}
         <p>site_name</p><input type="text" name="site_name" id="site_name" /><br>
@@ -149,7 +121,7 @@
         <p>slack_token</p><input type="text" name="slack_token" id="slack_token" /><br>
         <p>slack_channel</p><input type="text" name="slack_channel" id="slack_channel" /><br>
         <input type="submit" />
-    </form>
+    </form> -->
 
     <script>
         $(document).ready(function () {
@@ -158,11 +130,24 @@
                     type: 'GET',
                     url: "{% url 'monitor-ajax_json' %}",
                     success: function (response) {
-                        //console.log(response);
-                        $("#display_data").empty();
+                        $("#tbody-main").empty();
                         for (var key in response.websites) {
-                            var temp = "<li>" + response.websites[key].site_name + "</li>"
-                            $("#display_data").append(temp)
+                            var status;
+                            if (response.websites[key].site_up_status == true) {
+                                status = "<td class='text-center border rounded bg-success text-light'>UP</td>"
+                            } else {
+                                status = "<td class='text-center border rounded bg-danger text-light'>DOWN</td>"
+                            }
+                            var tbl_html = "<tr id='tr-main' class='align-middle'>" +
+                                "<th scope='row'>" + response.websites[key].row_number + "</th>" +
+                                "<td><span class='fw-bold'>" + response.websites[key].site_name + "</span></td>" +
+                                "<td><a href='" + response.websites[key].site_url + "' target='_blank' class='btn btn-outline-primary'>" + response.websites[key].site_url + "</a ></td >" +
+                                status +
+                                "<td class='text-center'><a id='a_edit_tbl' href='#' type='button' class='btn btn-outline-primary'>Edit</a></td>" +
+                                "<td class='text-center'><a id='a_delete_tbl' href='#' type='button' class='btn btn-outline-danger'>Delete</a></td>" +
+                                "</tr>"
+
+                            $("#tbody-main").append(tbl_html)
                         }
                     },
                     error: function (response) {
@@ -172,7 +157,7 @@
             }, 1000);
         });
     </script>
-    <script>
+    <!-- <script>
         $(document).on('submit', '#post-form', function (e) {
             e.preventDefault();
 
@@ -194,7 +179,7 @@
                 }
             });
         });
-    </script>
+    </script> -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
         crossorigin="anonymous"></script>

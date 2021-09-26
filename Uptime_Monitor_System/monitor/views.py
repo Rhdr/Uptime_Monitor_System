@@ -66,7 +66,10 @@ def home_delete(request, pk):
 
 
 def ajax_json(request):
-    websites = Website.objects.all()
+    websites = Website.objects.order_by('site_name')
+    for row_number, website in enumerate(websites):
+        website.row_number = row_number + 1
+    #websites = Website.objects.all()
     return JsonResponse({"websites": list(websites.values())})
 
 def ajax_create(request):
