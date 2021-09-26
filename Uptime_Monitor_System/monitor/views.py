@@ -8,15 +8,15 @@ from .forms import WebsiteAddUpdateForm
 from .models import Website
 
 job_scheduler = JobScheduler()
-#slackbot = SlackBot()
-slackbot = None
+slackbot = SlackBot()
+#slackbot = None
 inspector = Inspector(job_scheduler, slackbot)
 
 
 # Views
 def home(request, edit_obj=None, delete=False):
     # start website inspections & update db
-    #inspector.start_scheduled_inspection()
+    inspector.start_scheduled_inspection()
 
     #add row number
     websites = Website.objects.order_by('site_name')
