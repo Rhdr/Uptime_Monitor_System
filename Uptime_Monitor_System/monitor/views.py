@@ -14,7 +14,7 @@ inspector = Inspector(job_scheduler, slackbot)
 
 
 # Views
-def home(request, edit_obj=None):
+def home(request, edit_obj=None, delete=False):
     # start website inspections & update db
     #inspector.start_scheduled_inspection()
 
@@ -33,6 +33,7 @@ def home(request, edit_obj=None):
         if add_form.is_valid():
             #print("SiteName", add_form.cleaned_data['site_name'])
             add_form.save(commit=True)
+            return HttpResponseRedirect("/")
     else:
         if edit_obj:
             print("Edit obj:", edit_obj)
@@ -58,8 +59,6 @@ def home_edit(request, pk):
 
 
 def home_delete(request, pk):
-    print("DELETING")
     website = Website.objects.get(pk=pk)
     website.delete()
-    website.save()
     return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
