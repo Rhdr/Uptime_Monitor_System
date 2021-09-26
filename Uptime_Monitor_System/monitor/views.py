@@ -58,6 +58,8 @@ def home_edit(request, pk):
 
 
 def home_delete(request, pk):
+    print("DELETING")
     website = Website.objects.get(pk=pk)
     website.delete()
+    website.save()
     return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
