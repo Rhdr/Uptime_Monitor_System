@@ -27,14 +27,7 @@ class SlackBot():
 
 
 if __name__ == "__main__":
-    slack_token = "xoxb-2503398942439-2525293310900-lHr4bEhHNbg0bgnafakqpSod"
-    #slack_token = ""
+    slack_token = 'your slack token'
     channel = '#monitor'
     message = 'New slackbot saying hi yet again!'
     SlackBot.post_message(slack_token, channel, message)
-
-    # bot = SlackBot()
-    # if bot.post_message(message='OOP class message again!'):
-    #     print("Message sent!")
-    # else:
-    #     print("Message failed", bot.last_error)
