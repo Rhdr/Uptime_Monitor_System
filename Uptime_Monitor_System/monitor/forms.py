@@ -10,4 +10,4 @@ class WebsiteAddUpdateForm(forms.ModelForm):
 
     class Meta:
         model = Website
-        fields = ("site_name", "site_url", "slack_account_url")
+        fields = ("site_name", "site_url", "slack_token", "slack_channel")
