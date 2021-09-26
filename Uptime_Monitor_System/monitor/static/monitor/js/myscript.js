@@ -6,7 +6,7 @@ var a_delete_tbl = document.querySelectorAll("#a_delete_tbl")
 var modal_addedit = new bootstrap.Modal(document.getElementById("btn_add_site"), {});
 var modal_delete = new bootstrap.Modal(document.getElementById("btn_delete_site"), {});
 var modal_to_open = "NONE";
-var delete_pk = -1;
+// var delete_pk = -1;
 
 
 a_add.addEventListener("click", function () {
