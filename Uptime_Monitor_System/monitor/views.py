@@ -88,12 +88,6 @@ def ajax_create(request):
 
 
 def ajax_edit(request):
-    print("")
-    print("")
-    print("DJANGO ajax_edit!!!!!!!!!!!!!!!")
-    print("")
-    print("")
-    print("")
     if request.method == "POST":
         pk_website = request.POST['pk_website']
         site_name = request.POST['site_name']
@@ -107,6 +101,14 @@ def ajax_edit(request):
         existing_website.slack_channel = slack_channel
         existing_website.save()
     return HttpResponse("Website edited")
+
+
+def ajax_delete(request):
+    if request.method == "POST":
+        pk_website = request.POST['pk_website']
+        existing_website = Website.objects.get(pk_website=pk_website)
+        existing_website.delete()
+    return HttpResponse("Website deleted")
 
 
 # def ajax_home(request):

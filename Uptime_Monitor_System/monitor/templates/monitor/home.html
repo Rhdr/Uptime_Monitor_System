@@ -13,8 +13,6 @@
     <title>Uptime Monitor</title>
 </head>
 
-
-
 <body>
     <!-- <div class="container-lg shadow p-3 bg-white rounded min-vh-100"> -->
     <header>
@@ -139,10 +137,12 @@
                     <h5 class="modal-title" id="staticBackdropLabel">Delete Website</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
-                <form method="POST">
-                    {% csrf_token %}
+                <form id="delete-form" method="POST">
                     <div class="modal-body">
+                        {% csrf_token %}
                         <p>Are you sure you wish to delete this row?</p>
+                        <span></span><input type="hidden" name="delete_modal_pk_website"
+                            id="delete_modal_pk_website" /><br>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
@@ -152,16 +152,6 @@
             </div>
         </div>
     </div>
-
-    <!-- <h1>Submit Form</h1>
-    <form id="add-form" method="POST">
-        {% csrf_token %}
-        <p>site_name</p><input type="text" name="site_name" id="site_name" /><br>
-        <p>site_url</p><input type="url" name="site_url" id="site_url" /><br>
-        <p>slack_token</p><input type="text" name="slack_token" id="slack_token" /><br>
-        <p>slack_channel</p><input type="text" name="slack_channel" id="slack_channel" /><br>
-        <input type="submit" />
-    </form> -->
 
     <script>
         //GET
@@ -246,20 +236,28 @@
                 }
             });
         });
-    </script>
 
-    <!-- <script>
-        $(document).ready(function () {
-            $(".btn_edit").on('click', function () {
-                var btn_id = this.id; // button ID 
-                var tr_id = $(this).closest('tr').attr('id'); // table row ID 
-                console.log("btn_id")
-                console.log("tr_id")
+        //POST-DELETE
+        console.log("Delete")
+        $(document).on('submit', '#delete-form', function (e) {
+            e.preventDefault();
+
+            $.ajax({
+                type: 'POST',
+                url: "ajax_delete/",
+                data: {
+                    pk_website: $('#delete_modal_pk_website').val(),
+                    csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val()
+                },
+                success: function (data) {
+                    console.log(data);
+                },
+                error: function (data, error) {
+                    console.log("An error occured:" + error);
+                }
             });
         });
-    </script> -->
-
-
+    </script>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
         integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
