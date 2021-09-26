@@ -1,0 +1,77 @@
+<!doctype html>
+{% load static %}
+
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <title>Ajax</title>
+</head>
+
+<body>
+    <h1>List of live data:</h1>
+    <ul id="display_data">
+    </ul>
+
+    <h1>Submit Form</h1>
+    <form id="post-form" method="POST">
+        {% csrf_token %}
+        <p>site_name</p><input type="text" name="site_name" id="site_name" /><br>
+        <p>site_url</p><input type="url" name="site_url" id="site_url" /><br>
+        <p>slack_token</p><input type="text" name="slack_token" id="slack_token" /><br>
+        <p>slack_channel</p><input type="text" name="slack_channel" id="slack_channel" /><br>
+        <input type="submit" />
+    </form>
+
+
+    <script>
+        $(document).on('submit', '#post-form', function (e) {
+            e.preventDefault();
+
+            $.ajax({
+                type: 'POST',
+                url: "ajax_create/",
+                data: {
+                    site_name: $('#site_name').val(),
+                    site_url: $('#site_url').val(),
+                    slack_token: $('#slack_token').val(),
+                    slack_channel: $('#slack_channel').val(),
+                    csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val()
+                },
+                success: function (data) {
+                    console.log(data);
+                },
+                error: function (data) {
+                    console.log("An error occured");
+                }
+            });
+        });
+    </script>
+
+    <script>
+        $(document).ready(function () {
+            setInterval(function () {
+                $.ajax({
+                    type: 'GET',
+                    url: "{% url 'monitor-ajax_get' %}",
+                    success: function (response) {
+                        //console.log(response);
+                        $("#display_data").empty();
+                        for (var key in response.websites) {
+                            var temp = "<li>" + response.websites[key].site_name + "</li>"
+                            $("#display_data").append(temp)
+                        }
+                    },
+                    error: function (response) {
+                        console.log("An error occured");
+                    }
+                });
+            }, 1000);
+        });
+    </script>
+</body>
+
+</html>

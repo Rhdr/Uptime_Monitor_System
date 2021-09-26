@@ -1,5 +1,6 @@
+from django.http.response import JsonResponse
 from django.shortcuts import render
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, HttpResponse
 from django.shortcuts import redirect
 from .extras.job_scheduler import JobScheduler
 from .extras.slackbot import SlackBot
@@ -62,3 +63,31 @@ def home_delete(request, pk):
     website = Website.objects.get(pk=pk)
     website.delete()
     return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
+
+
+def ajax_json(request):
+    websites = Website.objects.all()
+    return JsonResponse({"websites": list(websites.values())})
+
+
+def ajax_home(request):
+    return render(request, 'monitor/ajax_home.html')
+
+
+def ajax_get(request):
+    websites = Website.objects.all()
+    return JsonResponse({"websites": list(websites.values())})
+
+
+def ajax_create(request):
+    if request.method == "POST":
+        site_name = request.POST['site_name']
+        site_url = request.POST['site_url']
+        slack_token = request.POST['slack_token']
+        slack_channel = request.POST['slack_channel']
+        new_website = Website(site_name=site_name,
+                              site_url=site_url,
+                              slack_token=slack_token,
+                              slack_channel=slack_channel)
+        new_website.save()
+    return HttpResponse("New profile created")

@@ -136,7 +136,33 @@
     </div>
 
 
-    <!-- bootstrap -->
+    <h1>List of live data:</h1>
+    <ul id="display_data">
+
+    </ul>
+
+
+    <script>
+        $(document).ready(function () {
+            setInterval(function () {
+                $.ajax({
+                    type: 'GET',
+                    url: "{% url 'monitor-ajax_get' %}",
+                    success: function (response) {
+                        //console.log(response);
+                        $("#display_data").empty();
+                        for (var key in response.websites) {
+                            var temp = "<li>" + response.websites[key].site_name + "</li>"
+                            $("#display_data").append(temp)
+                        }
+                    },
+                    error: function (response) {
+                        console.log("An error occured");
+                    }
+                });
+            }, 1000);
+        });
+    </script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
         crossorigin="anonymous"></script>
