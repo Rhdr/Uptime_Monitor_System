@@ -1,8 +1,3 @@
-from slack import WebClient
-from slack.errors import SlackApiError
-import os
-from os.path import join, dirname
-from dotenv import load_dotenv
 import requests
 
 
