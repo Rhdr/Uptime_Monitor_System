@@ -15,7 +15,7 @@ inspector = Inspector(job_scheduler, slackbot)
 
 
 # Views
-def home(request, edit_obj=None, delete=False):
+def home(request):
     # start website inspections & update db
     inspector.start_scheduled_inspection()
 
@@ -26,7 +26,6 @@ def home(request, edit_obj=None, delete=False):
 
     context_dict = {
         'websites': websites,
-        # 'add_form': add_form,
     }
     return render(request, 'monitor/home.html', context_dict)
 
