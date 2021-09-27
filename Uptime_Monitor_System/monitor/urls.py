@@ -8,8 +8,4 @@ urlpatterns = [
     path('ajax_edit/', views.ajax_edit, name='monitor-ajax_edit'),
     path('ajax_delete/', views.ajax_delete, name='monitor-ajax_delete'),
 
-
-    # path('ajax_home/', views.ajax_home, name='monitor-ajax_home'),
-    # path('ajax_get/', views.ajax_get, name='monitor-ajax_get'),
-    # path('ajax_home/ajax_create/', views.ajax_create, name='monitor-ajax_create'),
 ]
