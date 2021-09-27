@@ -1,5 +1,5 @@
 # Uptime_Monitor_System
-A website up/down monitoring system. 
+A website up/down monitoring system
 
 # Features:
 - Realtime monitoring of websites up/down statuses
