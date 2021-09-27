@@ -2,7 +2,7 @@
 A website up/down monitoring system. 
 
 # Features:
-- Real-time monitoring of websites up/down statuses
+- Real-time monitoring of websites up/down statuses (with threaded scheduling)
 - Dynamically add, edit & delete websites to be monitored 
 - Register a slack api app token & channel to receive real time status updates to slack 
 
