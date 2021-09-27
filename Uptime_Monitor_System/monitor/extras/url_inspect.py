@@ -34,7 +34,7 @@ class InspectionURLTool():
             try:
                 new_http_response_code = urllib.request.urlopen(
                     website.site_url).getcode()
-            except urllib.request.URLError:
+            except (urllib.request.URLError, ValueError):
                 new_http_response_code = 404
             if website.site_last_http_response != new_http_response_code:
                 website.site_last_http_response = new_http_response_code
