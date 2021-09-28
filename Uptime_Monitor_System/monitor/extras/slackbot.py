@@ -16,7 +16,8 @@ class SlackBot():
                 requests.post(url='https://slack.com/api/chat.postMessage',
                               data=data)
             except Exception as e:
-                print("Could not send slack message:", str(e))
+                print("Could not send slack message:", str(e),
+                      'Original message:', message)
         else:
             print("Please provide a slack token, channel and message ")
 
