@@ -10,7 +10,7 @@ A website up/down monitoring system
 - On the slack api website, create a slack app/bot with chat-write permissions, install it and generate a OAuth token
 - Next on the main slack website, add the new slack app/bot to your channel 
 - Lastly when using this app and adding/editing a website, insert your slack token & slack channel.
-Slack is now linked and you will now receive status changes for as long as this app runs
+Slack is now linked and you will receive status change updateds for as long as this app runs
 
 # How to start the localhost Django Server:
 - Download the repo and open in terminal.
@@ -25,10 +25,8 @@ Slack is now linked and you will now receive status changes for as long as this 
 - SQLLite
 
 # Dependencies:
-- Django==3.2.5
 - requests==2.26.0
-- python-dotenv==0.19.0
-- slackclient==2.9.3
+- Django==3.2.5
 
 # Django Super user
 - Username: Rheeder
