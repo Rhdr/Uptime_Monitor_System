@@ -40,12 +40,14 @@ if __name__ == '__main__':
         print(f"{datetime.datetime.now()}: {message}")
 
     scheduler = JobScheduler()
-    scheduler.start(3,
+    scheduler.start(2,
                     job_that_needs_doing,
                     message="Someone is doing the job!")
     print("__main__: After the worker started: I can still run!")
-    time.sleep(7)
+    time.sleep(5)
     print("__main__: After the worker started: and run some more!")
+    time.sleep(5)
     #print("__main__: After the worker started: Lets run the worker again!")
     #scheduler.start(10, job_that_needs_doing)
     scheduler.stop()
+    print("stoped")
