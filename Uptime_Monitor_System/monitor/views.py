@@ -48,6 +48,7 @@ def ajax_create(request):
                               slack_token=slack_token,
                               slack_channel=slack_channel)
         new_website.save()
+        inspector.add_newly_created_website(new_website)
     return HttpResponse("New website created")
 
 
@@ -72,4 +73,5 @@ def ajax_delete(request):
         pk_website = request.POST['pk_website']
         existing_website = Website.objects.get(pk_website=pk_website)
         existing_website.delete()
+        inspector.remove_website(existing_website)
     return HttpResponse("Website deleted")

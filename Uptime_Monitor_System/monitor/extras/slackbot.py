@@ -22,7 +22,7 @@ class SlackBot():
 
 
 if __name__ == "__main__":
-    slack_token = 'your slack token'
-    channel = '#monitor'
+    slack_token = 'your token'
+    channel = '#test'
     message = 'New slackbot saying hi yet again!'
     SlackBot.post_message(slack_token, channel, message)
