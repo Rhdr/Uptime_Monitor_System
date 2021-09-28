@@ -1,6 +1,6 @@
 import urllib.request
 from datetime import datetime
-
+import requests
 from django.db.models.query import QuerySet
 
 if __name__ == '__main__':
@@ -32,13 +32,14 @@ class InspectionURLTool():
         changed_websites = []
         for website in websites:
             try:
-                new_http_response_code = urllib.request.urlopen(
-                    website.site_url).getcode()
-            except (urllib.request.URLError, ValueError):
+                new_http_response_code = requests.head(website.site_url,
+                                                       timeout=4).status_code
+            except Exception as e:
                 new_http_response_code = 404
+                #print('InspectionURLTool:', e)
             if website.site_last_http_response != new_http_response_code:
                 website.site_last_http_response = new_http_response_code
-                website.site_up_status = True if new_http_response_code == 200 else False
+                website.site_up_status = True if new_http_response_code < 400 else False
                 changed_websites.append(website)
         return changed_websites
 
@@ -52,7 +53,6 @@ class InspectionDBTool():
 
     @staticmethod
     def get_websites() -> dict:
-        #websites = Website.objects.in_bulk(field_name='site_url')
         websites = list(Website.objects.all())
         return websites
 
@@ -67,39 +67,45 @@ class Inspector:
         self.job_scheduler = job_scheduler
         self.slackbot = slackbot
         self._started = False
-        #self._websites = InspectionDBTool.get_websites()
         self._changed_websites = {}
 
     def start_scheduled_inspection(self) -> None:
         if not self._started:
-            self.job_scheduler.start(10, self._inspection)
+            self.job_scheduler.start(8, self._inspection)
             self._slackbot_message_all_startstop()
             self._started = True
 
     def stop_scheduled_inspection(self) -> None:
         self.job_scheduler.stop()
-        self._slackbot_message_all_startstop()
+        self._slackbot_message_all_startstop(False)
 
     def add_newly_created_website(self, website):
         status = "UP" if website.site_up_status else "DOWN"
         message = f"{datetime.now()} - Scheduled monitor for {website} initiated, current status: {status}"
-        self.slackbot.post_message(website.slack_token, website.slack_channel,
-                                   message)
+        if self.slackbot:
+            self.slackbot.post_message(website.slack_token,
+                                       website.slack_channel, message)
+        else:
+            print(message)
 
     def remove_website(self, website):
-        message = f"{datetime.now()} - Scheduled monitoring for {website} terminated"
-        self.slackbot.post_message(website.slack_token, website.slack_channel,
-                                   message)
+        message = f"{datetime.now()} - Scheduled monitoring for {website} was terminated"
+        if self.slackbot:
+            self.slackbot.post_message(website.slack_token,
+                                       website.slack_channel, message)
+        else:
+            print(message)
 
     def _inspection(self) -> None:
         '''schedueld job that runs until stop_scheduled_inspection is called'''
         websites = InspectionDBTool.get_websites()
         self._changed_websites = InspectionURLTool.get_changed_responses(
             websites)
+        #print("Inspector: changed websites", self._changed_websites)
         if len(self._changed_websites) > 0:
             self._slackbot_message_change()
             InspectionDBTool.save_websites(self._changed_websites)
-        #else:
+        # else:
         #    self._slackbot_chat(f"{datetime.now()} - No change detected")
 
     def _slackbot_message_all_startstop(self, start_message=True) -> None:
@@ -129,17 +135,6 @@ class Inspector:
 
 if __name__ == "__main__":
     import time
-
-    def print_websites():
-        websites = Website.objects.all()
-        for website in websites:
-            print(website.site_name, website.site_url,
-                  website.site_last_http_response)
-
-    print('Start')
-    print_websites()
-    print('')
-
     job_scheduler = JobScheduler()
     slack_bot = SlackBot
     #slack_bot = None
@@ -159,5 +154,3 @@ if __name__ == "__main__":
     inspector.start_scheduled_inspection()
     time.sleep(120)
     inspector.stop_scheduled_inspection()
-
-    print_websites()
