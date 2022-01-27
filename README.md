@@ -1,5 +1,5 @@
 # Uptime_Monitor_System
-A website up/down monitoring system
+A website to watch/monitor the up/down status of other websites and provide feedback to your slack messaging account.
 
 # Features:
 - Real-time monitoring of websites up/down statuses (with threaded scheduling)
